@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import mediapipe as mp
+from PIL import ImageFont, ImageDraw, Image
 
 
 WHITE_COLOR = (245, 242, 226)
@@ -62,15 +63,20 @@ class WebcamManager(object):
         text_x, text_y = int((window_w - text_w) / 2), HEIGHT - text_h - offset
 
         cv2.rectangle(frame, (0, text_y - offset), (window_w, HEIGHT), bg_color, -1)
-        cv2.putText(
-            frame,
-            self.sign_detected,
-            (text_x, text_y + text_h + font_size - 1),
-            font,
-            font_size,
-            (118, 62, 37),
-            font_thickness,
-        )
+        
+        # Convert to PIL image
+        pil_img = Image.fromarray(frame)
+        draw = ImageDraw.Draw(pil_img)
+        
+        # Load a Chinese font
+        fontpath = "./fonts/NotoSansTC-Regular.ttf" 
+        font = ImageFont.truetype(fontpath, 28)
+
+        draw.text((text_x, text_y-15), self.sign_detected, (0, 0, 0), font)
+
+        # Convert back to OpenCV image
+        frame = np.array(pil_img)
+
         return frame
 
     @staticmethod
