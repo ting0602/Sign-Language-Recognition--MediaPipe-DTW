@@ -88,3 +88,13 @@ ___
 
  - [Pham Chinh Huu, Le Quoc Khanh, Le Thanh Ha : Human Action Recognition Using Dynamic Time Warping and Voting Algorithm](https://www.researchgate.net/publication/290440452)
  - [Mediapipe : Pose classification](https://google.github.io/mediapipe/solutions/pose_classification.html)
+
+___
+
+### ChangeSpeed.py usage
+The Script recursively modify the video speed (can be modified in .py) and save as a new video named as {original_name-speedi}.
+deault speed: 0.7, 1.5 
+```
+pip install moviepy
+python ChangeSpeed.py <dir_name>
+```
