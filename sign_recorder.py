@@ -40,7 +40,7 @@ class SignRecorder(object):
             else:
                 self.compute_distances()
                 print(self.reference_signs)
-
+        # no result
         if np.sum(self.reference_signs["distance"].values) == 0:
             return "", self.is_recording
         return self._get_sign_predicted(), self.is_recording
@@ -86,5 +86,5 @@ class SignRecorder(object):
 
         predicted_sign, count = sign_counter[0]
         if count / batch_size < threshold:
-            return "請再次輸入"
+            return ""
         return predicted_sign
