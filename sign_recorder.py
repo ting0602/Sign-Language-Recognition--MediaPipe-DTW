@@ -8,7 +8,7 @@ from utils.landmark_utils import extract_landmarks
 
 
 class SignRecorder(object):
-    def __init__(self, reference_signs: pd.DataFrame, seq_len=50):
+    def __init__(self, reference_signs: pd.DataFrame, seq_len=20):
         # Variables for recording
         self.is_recording = False
         self.seq_len = seq_len
@@ -18,6 +18,16 @@ class SignRecorder(object):
 
         # DataFrame storing the distances between the recorded sign & all the reference signs from the dataset
         self.reference_signs = reference_signs
+        
+        self.detect_sign = ""
+        
+        self.last_sign = ""
+        
+        self.counting = 0
+        
+        self.detect_signs_list = []
+        
+        self.stop_input = False
 
     def record(self):
         """
@@ -38,12 +48,21 @@ class SignRecorder(object):
             if len(self.recorded_results) < self.seq_len:
                 self.recorded_results.append(results)
             else:
+                print("detect")
                 self.compute_distances()
-                print(self.reference_signs)
+                pred_sign = self._get_sign_predicted()
+                self.check_sign_state()
+                if self.detect_sign != "":
+                    self.counting = 0
+                # return pred_sign, self.is_recording
+                
         # no result
-        if np.sum(self.reference_signs["distance"].values) == 0:
-            return "", self.is_recording
-        return self._get_sign_predicted(), self.is_recording
+        if len(self.recorded_results) == 0:
+            print("distance", self.reference_signs["distance"].values)
+            if np.sum(self.reference_signs["distance"].values) == 0 or np.sum(self.reference_signs["distance"].values) > 10000:
+                self.detect_no_hand()
+                return "", self.is_recording
+        return "", self.is_recording
 
     def compute_distances(self):
         """
@@ -52,6 +71,7 @@ class SignRecorder(object):
         """
         left_hand_list, right_hand_list = [], []
         for results in self.recorded_results:
+            # if a hand doesn't appear, return an array of zeros
             _, left_hand, right_hand = extract_landmarks(results)
             left_hand_list.append(left_hand)
             right_hand_list.append(right_hand)
@@ -64,9 +84,9 @@ class SignRecorder(object):
 
         # Reset variables
         self.recorded_results = []
-        self.is_recording = False
+        # self.is_recording = False
 
-    def _get_sign_predicted(self, batch_size=5, threshold=0.5):
+    def _get_sign_predicted(self, batch_size=5, threshold=0.7):
         """
         Method that outputs the sign that appears the most in the list of closest
         reference signs, only if its proportion within the batch is greater than the threshold
@@ -86,5 +106,25 @@ class SignRecorder(object):
 
         predicted_sign, count = sign_counter[0]
         if count / batch_size < threshold:
+            self.detect_sign = ""
+            # return self.check_sign_state()
             return ""
+        self.detect_sign = predicted_sign
+        print("predict:", predicted_sign)
         return predicted_sign
+        # return self.check_sign_state()
+
+    def check_sign_state(self):
+        if self.detect_sign != self.last_sign and self.detect_sign != "":
+            self.detect_signs_list.append(self.detect_sign)
+            self.last_sign = self.detect_sign
+            return False
+        self.is_recording = True
+        return True
+    
+    def detect_no_hand(self):
+        self.counting += 1
+        if self.counting > 3:
+            print("STOP!")
+            self.is_recording = False
+            self.stop_input = True

@@ -1,8 +1,6 @@
 import os
-
 import pandas as pd
 from tqdm import tqdm
-
 from models.sign_model import SignModel
 from utils.landmark_utils import save_landmarks_from_video, load_array
 
@@ -29,11 +27,15 @@ def load_dataset():
 
         for idx in tqdm(range(n)):
             save_landmarks_from_video(videos_not_in_dataset[idx])
+            
+    with open("video_name.txt", "w", encoding="utf-8") as file:
+        for video_name in videos:
+            file.write(video_name + "\n")
 
-    return videos
-
-
-def load_reference_signs(videos):
+def load_reference_signs():
+    with open("video_name.txt", "r", encoding="utf-8") as file:
+        videos = [line.strip() for line in file]
+        
     reference_signs = {"name": [], "sign_model": [], "distance": []}
     for video_name in videos:
         sign_name = video_name.split("-")[0]
