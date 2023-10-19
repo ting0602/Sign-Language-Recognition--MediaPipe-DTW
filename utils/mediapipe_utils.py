@@ -4,6 +4,9 @@ import mediapipe as mp
 
 def mediapipe_detection(image, model):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # FIXME: Rotate
+    # image = cv2.rotate(image, cv2.ROTATE_180)
+    # print("rotate shape", image.shape)
     image.flags.writeable = False
     results = model.process(image)
     image.flags.writeable = True

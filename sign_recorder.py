@@ -57,8 +57,8 @@ class SignRecorder(object):
                 # return pred_sign, self.is_recording
                 
         # no result
-        if len(self.recorded_results) == 0:
-            print("distance", self.reference_signs["distance"].values)
+        # if len(self.recorded_results) == 0:
+            # print("distance", self.reference_signs["distance"].values)
             if np.sum(self.reference_signs["distance"].values) == 0 or np.sum(self.reference_signs["distance"].values) > 10000:
                 self.detect_no_hand()
                 return "", self.is_recording

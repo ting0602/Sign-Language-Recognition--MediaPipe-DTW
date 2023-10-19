@@ -3,7 +3,7 @@ import pandas as pd
 from tqdm import tqdm
 from models.sign_model import SignModel
 from utils.landmark_utils import save_landmarks_from_video, load_array
-
+import pickle
 
 def load_dataset():
     videos = [
@@ -52,4 +52,10 @@ def load_reference_signs():
     print(
         f'Dictionary count: {reference_signs[["name", "sign_model"]].groupby(["name"]).count()}'
     )
-    return reference_signs
+    # Serialize and save the reference_signs to a file
+    with open("reference_signs.pickle", "wb") as file:
+        pickle.dump(reference_signs, file)
+
+    # Load the reference_signs from the file
+
+    return reference_signs    
