@@ -23,19 +23,6 @@ def send_frame():
     result = detect_result()
     return jsonify({"bool": is_stop, "message":result})
 
-    # except:
-    #     print("ERROR: /api/slr")
-    #     return jsonify({"bool": True, "message": "錯誤，請再輸入一次"})
-
-# @app.route('/api/get_text', methods=['POST'])
-# def get_text():
-#     try:
-#         result = detect_result()
-#         return jsonify({"message": result})
-#     except:
-#         print("ERROR: /api/get_text")
-#         return jsonify({"message": "錯誤，請再輸入一次"})
-#         # return "錯誤，請再輸入一次"
     
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

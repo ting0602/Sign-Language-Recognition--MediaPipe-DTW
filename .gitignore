@@ -1,6 +1,8 @@
 __pycache__
 .idea
 .DS_Store
+*.pickle
+ngrok.exe
 
 data/dataset/*
 !data/dataset/.gitkeep
