@@ -9,3 +9,6 @@ data/dataset/*
 
 data/videos/*
 !data/videos/.gitkeep
+
+data/command_videos/*
+!data/command_videos/.gitkeep
