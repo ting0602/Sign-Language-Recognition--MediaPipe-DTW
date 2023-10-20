@@ -1,11 +1,9 @@
 import os
-
 import pandas as pd
 from tqdm import tqdm
-
 from models.sign_model import SignModel
 from utils.landmark_utils import save_landmarks_from_video, load_array
-
+import pickle
 
 def load_dataset():
     videos = [
@@ -29,11 +27,15 @@ def load_dataset():
 
         for idx in tqdm(range(n)):
             save_landmarks_from_video(videos_not_in_dataset[idx])
+            
+    with open("video_name.txt", "w", encoding="utf-8") as file:
+        for video_name in videos:
+            file.write(video_name + "\n")
 
-    return videos
-
-
-def load_reference_signs(videos):
+def load_reference_signs():
+    with open("video_name.txt", "r", encoding="utf-8") as file:
+        videos = [line.strip() for line in file]
+        
     reference_signs = {"name": [], "sign_model": [], "distance": []}
     for video_name in videos:
         sign_name = video_name.split("-")[0]
@@ -50,4 +52,10 @@ def load_reference_signs(videos):
     print(
         f'Dictionary count: {reference_signs[["name", "sign_model"]].groupby(["name"]).count()}'
     )
-    return reference_signs
+    # Serialize and save the reference_signs to a file
+    with open("reference_signs.pickle", "wb") as file:
+        pickle.dump(reference_signs, file)
+
+    # Load the reference_signs from the file
+
+    return reference_signs    
