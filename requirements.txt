@@ -7,7 +7,6 @@ openai==0.28.1
 opencv_contrib_python==4.8.1.78
 pandas==2.1.1
 Pillow==10.0.1
-Pillow==10.1.0
 pytube==15.0.0
 pytube3==9.6.4
 Requests==2.31.0
