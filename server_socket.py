@@ -1,7 +1,7 @@
 import socket
 import cv2
 import numpy as np
-from main import SLR_init, frame_input, detect_result
+from main import SLR_init, frame_input, detect_result, single_frame_input
 
 FRAME_REQUIRED = 20
 
@@ -10,7 +10,7 @@ server.bind(("140.113.141.90", 12345))
 # server.bind(("140.113.141.90", 23456))
 server.listen(10)
 
-frames = []
+# frames = []
 frame_count = 0
 image_size = 0
 
@@ -83,9 +83,10 @@ while True:
 
         
         try:
-            frames.append(rotate.tolist())
+            single_frame_input(rotate.tolist())
+            # frames.append(rotate.tolist())
             image_size = 0
-            frame_count += 1
+            # frame_count += 1
         except:
             conn.close()
             continue
@@ -95,11 +96,11 @@ while True:
         # jia ie ge frame
         
         # Send if 20 frames are collected
-        if frame_count == FRAME_REQUIRED: 
-            frame_count = 0
-            result = frame_input(frames)
+        # if frame_count == FRAME_REQUIRED: 
+        #     frame_count = 0
+        #     result = frame_input(frames)
 
-            # Clear buffer
-            frames.clear()
+        #     # Clear buffer
+        #     frames.clear()
 
     conn.close()

@@ -13,6 +13,10 @@ import config as c
 global Sign_Recorder
 global Command_Recorder
 global GPT_Result
+global frame_counting
+global times
+times = 0
+frame_counting = 0
 GPT_Result = ""
 
 def SLR_init():
@@ -82,14 +86,14 @@ def webcam_input():
             image, results = mediapipe_detection(frame, holistic)
 
             # Process results
-            sign_detected, is_recording = sign_recorder.process_results(results)
+            sign_recorder.process_results(results)
             
             # FIXME: input: gray
             # frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
             
             
             # Update the frame (draw landmarks & display result)
-            webcam_manager.update(frame, results, sign_detected, is_recording)
+            webcam_manager.update(frame, results, "", True)
             
             counting += 1
             if counting >= 20:
@@ -106,7 +110,6 @@ def webcam_input():
         cv2.destroyAllWindows()
         print("=== END ===")
         if len(sign_recorder.detect_signs_list) > 0:
-            print("face frame", sign_recorder.face_frame.shape)
             print("face frame", sign_recorder.face_frame)
             emo_text = detect_emotion(sign_recorder.face_frame)
             print(sign_recorder.detect_signs_list)
@@ -118,46 +121,6 @@ def webcam_input():
             print("GPT_Result:", GPT_Result)
         else:
             print("no input")
-        
-def frame_input(frame):
-    global Sign_Recorder
-    sign_recorder = Sign_Recorder
-    
-    # Object that draws keypoints & displays results
-    # webcam_manager = WebcamManager()
-    
-
-    # Set up the Mediapipe environment
-    with mediapipe.solutions.holistic.Holistic(
-        min_detection_confidence=0.5, min_tracking_confidence=0.5
-    ) as holistic:
-        # while not sign_recorder.stop_input:
-        
-        ###### Test detect_emotion(frame) #######
-        # emotions, emo_result, emo_value = detect_emotion(frame)
-        # print(emotions)
-        # print(emo_result, emo_value)
-        # exit(1)
-        ########################################
-
-        # Make detections
-        # print("origin shape:", frame.shape)
-        # frames_list = []
-        for f in frame:
-            # frame_data_bytes = bytes(f)
-            image_array = np.array(f, dtype=np.uint8)
-            print(image_array.shape)
-            # frames_list.append(image_array)
-            image, results = mediapipe_detection(image_array, holistic)
-            _, _ = sign_recorder.process_results(results)
-        
-        # frame = cv2.imdecode(np.frombuffer(frame, np.uint8), cv2.IMREAD_COLOR)
-
-        sign_recorder.record()
-
-    return sign_recorder.stop_input    
-    # print(sign_recorder.detect_signs_list)
-    # return sign_recorder.detect_signs_list
     
 def frame_input(frame):
     global Sign_Recorder
@@ -189,27 +152,47 @@ def frame_input(frame):
             print(image_array.shape)
             # frames_list.append(image_array)
             image, results = mediapipe_detection(image_array, holistic)
-            sign_detected, is_recording = sign_recorder.process_results(results)
+            sign_recorder.process_results(results)
         
         # frame = cv2.imdecode(np.frombuffer(frame, np.uint8), cv2.IMREAD_COLOR)
         
         sign_recorder.record()
 
-
-    # return sign_recorder.stop_input    
+def single_frame_input(frame):
+    global Sign_Recorder
+    sign_recorder = Sign_Recorder
     
-
-# def detect_result():
-#     if Sign_Recorder.is_stop:
-#         return GPT_Result
+    # Object that draws keypoints & displays results
+    # webcam_manager = WebcamManager()
     
-#     result = ""
-#     if len(Sign_Recorder.detect_signs_list) > 0:
-#         result = Sign_Recorder.detect_signs_list[-1]
+    global frame_counting
+    global times
+    # Set up the Mediapipe environment
+    with mediapipe.solutions.holistic.Holistic(
+        min_detection_confidence=0.5, min_tracking_confidence=0.5
+    ) as holistic:
 
-#     return result
+        # frame_data_bytes = bytes(f)
+        image_array = np.array(frame, dtype=np.uint8)
+        print(image_array.shape)
+        # frames_list.append(image_array)
+        try:
+            image, results = mediapipe_detection(image_array, holistic)
+            sign_recorder.process_results(results)
+            frame_counting += 1
+            times = 0
+        except:
+            print("frame error")
+            times += 1
 
-    
+    if frame_counting > 20:
+        frame_counting = 0
+        sign_recorder.record()
+    if times > 10:
+        print("no hands -- stop detect")
+        Sign_Recorder.stop_input = True
+        detect_result()
+          
 def detect_result():
     result = ""
     if Sign_Recorder.stop_input:

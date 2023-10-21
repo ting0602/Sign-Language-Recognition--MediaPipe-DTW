@@ -8,7 +8,7 @@ from utils.landmark_utils import extract_landmarks
 
 # FIXME: seq_len
 class SignRecorder(object):
-    def __init__(self, reference_signs: pd.DataFrame, seq_len=50):
+    def __init__(self, reference_signs: pd.DataFrame, seq_len=20):
         # Variables for recording
         self.is_recording = False
         self.seq_len = seq_len
@@ -21,15 +21,13 @@ class SignRecorder(object):
         
         self.detect_sign = ""
         
-        self.last_sign = ""
-        
         self.counting = 0
         
         self.detect_signs_list = []
         
         self.stop_input = False
         
-        self.face_frame = np.empty([1])
+        self.face_frame = ""
 
     def record(self):
         """
@@ -46,7 +44,6 @@ class SignRecorder(object):
         :return: Return the word predicted (blank text if there is no distances)
                 & the recording state
         """
-        # if self.is_recording:
         if len(self.recorded_results) < self.seq_len:
             self.recorded_results.append(results)
         else:
@@ -62,7 +59,6 @@ class SignRecorder(object):
             # if np.sum(self.reference_signs["distance"].values) == 0 or np.sum(self.reference_signs["distance"].values) > 10000:
             #     self.detect_no_hand()
             #     return "", self.is_recording
-        return "", self.is_recording
 
     def compute_distances(self):
         """
@@ -124,12 +120,11 @@ class SignRecorder(object):
         # return self.check_sign_state()
 
     def check_sign_state(self):
-        if self.detect_sign != self.last_sign and self.detect_sign != "":
+        if len(self.detect_signs_list) > 0:
+            if self.detect_sign != "" and self.detect_sign != self.detect_signs_list[-1]:
+                self.detect_signs_list.append(self.detect_sign)
+        if len(self.detect_signs_list) == 0 and self.detect_sign != "":
             self.detect_signs_list.append(self.detect_sign)
-            self.last_sign = self.detect_sign
-            return False
-        self.is_recording = True
-        return True
     
     def detect_no_hand(self):
         self.counting += 1
