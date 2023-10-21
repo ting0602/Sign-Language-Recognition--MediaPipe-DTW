@@ -88,3 +88,17 @@ ___
 
  - [Pham Chinh Huu, Le Quoc Khanh, Le Thanh Ha : Human Action Recognition Using Dynamic Time Warping and Voting Algorithm](https://www.researchgate.net/publication/290440452)
  - [Mediapipe : Pose classification](https://google.github.io/mediapipe/solutions/pose_classification.html)
+
+___
+
+### ChangeSpeed.py  usage
+ChangeSpeed.py recursively modify the video speed (can be modified in .py) and save as a new video named as {original_name-speedi}.
+RotateVideo.py do the rotation of the mp4 file (the angle can be modified in .py). The output is named as {original_name-rotatei}.
+default speed: 0.7, 1.5 
+default angle: 15, -15
+```
+pip install moviepy
+python ChangeSpeed.py <dir_name>
+python RotateVideo.py <dir_name>
+```
+
