@@ -1,1 +1,2 @@
 API_KEY = "AIzaSyDnKmSlgtqgGcDZPqyR-PKcdVH73JK1fJs"
+GPT_KEY = "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"

@@ -64,22 +64,28 @@ def detect_emotion(face_file, max_results=4, type=1):
         emotions.append(emotion)
 
     # Find the emotion with the highest value
-    max_emotion = max(emotions, key=lambda e: max(e.values()))
+    # max_emotion = max(emotions, key=lambda e: max(e.values()))
 
     # Create the second and third values as specified
-    emo_value = max(max_emotion.values())  # The highest value
+    # emo_value = max(max_emotion.values())  # The highest value
 
-    emotion_names = list(likelihood_mapping.keys())
-    emotion_index = list(max_emotion.values()).index(emo_value)
-    emo_result = emotion_names[emotion_index]
-    emo_value = max(max_emotion.values())
+    # emotion_names = list(likelihood_mapping.keys())
+    # emotion_index = list(max_emotion.values()).index(emo_value)
+    # emo_result = emotion_names[emotion_index]
+    # emo_value = max(max_emotion.values())
     
-    emo_result = [emo for emo, value in max_emotion.items() if value == emo_value]
-
-    return emotions, emo_result, emo_value
+    
+    emotion_text = ""
+    print("emo:", emotions)
+    if emotions[0]["joyLikelihood"] >= 3:
+        emotion_text = "~"
+    if emotions[0]["surpriseLikelihood"] >= 3:
+        emotion_text = "？"
+    # print(emotions, emo_result, emo_value)
+    return emotion_text
+    # return emotions, emo_result, emo_value
 
 ######## Test detect_emotion(file) ########
 # with open('./what.png', 'rb') as face_file:
-#     emotions, emo_result, emo_value = detect_emotion(face_file, type=0)
-#     print(emotions)
-#     print(emo_result, emo_value)
+#     text = detect_emotion(face_file, type=0)
+#     print(text)

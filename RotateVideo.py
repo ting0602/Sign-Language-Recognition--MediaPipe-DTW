@@ -10,12 +10,15 @@ def rotate_video(dir, in_angle, name_end):
         for file in files:
             in_path = os.path.join(root, file)
             in_name, in_ext = os.path.splitext(file)
-            if in_path.lower().endswith(".mp4") and in_name.find('rotate')==-1:
-                clip = VideoFileClip(in_path)
-                output = clip.rotate(in_angle)
-                
-                out_name = os.path.join(root, f'{in_name}-{name_end}{in_ext}')
-                output.write_videofile(out_name)
+            try:
+                if in_path.lower().endswith(".mp4") and in_name.find('rotate')==-1:
+                    clip = VideoFileClip(in_path)
+                    output = clip.rotate(in_angle)
+                    
+                    out_name = os.path.join(root, f'{in_name}-{name_end}{in_ext}')
+                    output.write_videofile(out_name)
+            except:
+                print("Error:", in_name)
 
 if __name__ == '__main__':
     dir_name = sys.argv[1]

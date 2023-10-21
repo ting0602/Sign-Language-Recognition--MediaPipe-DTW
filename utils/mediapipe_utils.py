@@ -3,14 +3,18 @@ import mediapipe as mp
 
 
 def mediapipe_detection(image, model):
+    # TODO: gray to rgb
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+    
     # FIXME: Rotate
     # image = cv2.rotate(image, cv2.ROTATE_180)
     # print("rotate shape", image.shape)
     image.flags.writeable = False
     results = model.process(image)
     image.flags.writeable = True
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    # FIXME: not image
+    # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     return image, results
 
 
