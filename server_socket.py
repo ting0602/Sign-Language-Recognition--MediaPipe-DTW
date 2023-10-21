@@ -1,13 +1,21 @@
 import socket
 import cv2
 import numpy as np
+import sys
 from main import SLR_init, frame_input, detect_result
 
-FRAME_REQUIRED = 20
+if len(sys.argv) < 2:
+    print("Usage: python server_socket.py <port>")
+    exit(-1)
+
+
+
+FRAME_REQUIRED = 10
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(("140.113.141.90", 12345))
+# server.bind(("140.113.141.90", 12345))
 # server.bind(("140.113.141.90", 23456))
+server.bind(("140.113.141.90", (int)(sys.argv[1])))
 server.listen(10)
 
 frames = []
@@ -15,6 +23,7 @@ frame_count = 0
 image_size = 0
 
 # Server loop
+request_ptr = 0
 while True:
 # for i in range(2):
     conn, addr = server.accept()
@@ -29,14 +38,18 @@ while True:
     # else: print("##", len(msg))
     
     flg=0
-    
     # Do initialize
     if msg == b"init": 
         SLR_init()
     # Request text result
     elif msg == b"request": 
-        result = detect_result()
-        # print(result)
+        result = detect_result(request_ptr)
+        if result == "": pass
+        elif result[0] == "@":
+            request_ptr = 0
+        else: request_ptr = request_ptr+1 
+        
+        print(result)
         conn.send(result.encode('utf-8'))
     elif msg == b"request_sign_mode":
         # result = ?
@@ -72,9 +85,10 @@ while True:
         if ((image_size < byte_len) or (image_size > byte_len+2)): 
             print("error")
             conn.close()
-            exit(0)
+            continue
+            # exit(0)
         
-        # print("done")
+        print("done")
         # Change data to cv2 format
         image = cv2.imdecode(np.frombuffer(byte_image, np.uint8), cv2.IMREAD_COLOR)
 
@@ -97,7 +111,7 @@ while True:
         # Send if 20 frames are collected
         if frame_count == FRAME_REQUIRED: 
             frame_count = 0
-            result = frame_input(frames)
+            frame_input(frames)
 
             # Clear buffer
             frames.clear()

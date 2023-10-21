@@ -8,7 +8,7 @@ from utils.landmark_utils import extract_landmarks
 
 # FIXME: seq_len
 class SignRecorder(object):
-    def __init__(self, reference_signs: pd.DataFrame, seq_len=50):
+    def __init__(self, reference_signs: pd.DataFrame, seq_len=20):
         # Variables for recording
         self.is_recording = False
         self.seq_len = seq_len
@@ -86,7 +86,7 @@ class SignRecorder(object):
         # self.recorded_results = []
         # self.is_recording = False
 
-    def _get_sign_predicted(self, batch_size=12, threshold=0.7):
+    def _get_sign_predicted(self, batch_size=12, threshold=0.3):
         """
         Method that outputs the sign that appears the most in the list of closest
         reference signs, only if its proportion within the batch is greater than the threshold
@@ -137,4 +137,4 @@ class SignRecorder(object):
         if self.counting > 3:
             print("STOP!")
             # self.is_recording = False
-            self.stop_input = True
+            # self.stop_input = True
