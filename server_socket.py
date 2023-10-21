@@ -6,8 +6,8 @@ from main import SLR_init, frame_input, detect_result, single_frame_input
 FRAME_REQUIRED = 20
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(("140.113.141.90", 12345))
-# server.bind(("140.113.141.90", 23456))
+# server.bind(("140.113.141.90", 12345))
+server.bind(("140.113.141.89", 12345))
 server.listen(10)
 
 # frames = []

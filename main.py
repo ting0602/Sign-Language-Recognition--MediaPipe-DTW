@@ -15,6 +15,7 @@ global Command_Recorder
 global GPT_Result
 global frame_counting
 global times
+global face_frame
 times = 0
 frame_counting = 0
 GPT_Result = ""
@@ -55,7 +56,7 @@ def webcam_input():
     counting = 0
     global Sign_Recorder
     print(Sign_Recorder)
-    sign_recorder = Sign_Recorder
+    # sign_recorder = Sign_Recorder
     # Object that draws keypoints & displays results
     webcam_manager = WebcamManager()
 
@@ -67,7 +68,7 @@ def webcam_input():
     ) as holistic:
         cap.isOpened()
         # while cap.isOpened():
-        while not sign_recorder.stop_input:
+        while not Sign_Recorder.stop_input:
             # Read feed
             ret, frame = cap.read()
                 ###### Test detect_emotion(frame) #######
@@ -86,7 +87,7 @@ def webcam_input():
             image, results = mediapipe_detection(frame, holistic)
 
             # Process results
-            sign_recorder.process_results(results)
+            Sign_Recorder.process_results(results)
             
             # FIXME: input: gray
             # frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
@@ -97,34 +98,33 @@ def webcam_input():
             
             counting += 1
             if counting >= 20:
-                sign_recorder.record()
+                Sign_Recorder.record()
                 counting = 0
             pressedKey = cv2.waitKey(1) & 0xFF
             if pressedKey == ord("r"):  # Record pressing r
                 # sign_recorder.record()
-                print("sign_detected", sign_detected)
+                print("sign_detected", Sign_Recorder)
             elif pressedKey == ord("q"):  # Break pressing q
                 break
             
         cap.release()
         cv2.destroyAllWindows()
         print("=== END ===")
-        if len(sign_recorder.detect_signs_list) > 0:
-            print("face frame", sign_recorder.face_frame)
-            emo_text = detect_emotion(sign_recorder.face_frame)
-            print(sign_recorder.detect_signs_list)
-            if emo_text != "":
-                sign_recorder.detect_signs_list.append(emo_text)
-            # TODO: gpt
-            global GPT_Result
-            GPT_Result = GPTtranslate(sign_recorder.detect_signs_list, c.GPT_KEY)
-            print("GPT_Result:", GPT_Result)
-        else:
-            print("no input")
+        # if len(Sign_Recorder.detect_signs_list) > 0:
+        #     print("face frame", Sign_Recorder.face_frame)
+        #     emo_text = detect_emotion(Sign_Recorder.face_frame)
+        #     print(Sign_Recorder.detect_signs_list)
+        #     if emo_text != "":
+        #         Sign_Recorder.detect_signs_list.append(emo_text)
+        #     # TODO: gpt
+        #     global GPT_Result
+        #     GPT_Result = GPTtranslate(Sign_Recorder.detect_signs_list, c.GPT_KEY)
+        #     print("GPT_Result:", GPT_Result)
+        # else:
+        #     print("no input")
     
 def frame_input(frame):
     global Sign_Recorder
-    sign_recorder = Sign_Recorder
     
     # Object that draws keypoints & displays results
     # webcam_manager = WebcamManager()
@@ -152,15 +152,14 @@ def frame_input(frame):
             print(image_array.shape)
             # frames_list.append(image_array)
             image, results = mediapipe_detection(image_array, holistic)
-            sign_recorder.process_results(results)
+            Sign_Recorder.process_results(results)
         
         # frame = cv2.imdecode(np.frombuffer(frame, np.uint8), cv2.IMREAD_COLOR)
         
-        sign_recorder.record()
+        Sign_Recorder.record()
 
 def single_frame_input(frame):
     global Sign_Recorder
-    sign_recorder = Sign_Recorder
     
     # Object that draws keypoints & displays results
     # webcam_manager = WebcamManager()
@@ -174,26 +173,46 @@ def single_frame_input(frame):
 
         # frame_data_bytes = bytes(f)
         image_array = np.array(frame, dtype=np.uint8)
-        print(image_array.shape)
+        # print(image_array.shape)
         # frames_list.append(image_array)
         try:
             image, results = mediapipe_detection(image_array, holistic)
-            sign_recorder.process_results(results)
+            print("OK: detect hand")
+            Sign_Recorder.process_results(results)
+            print("res arr:", len(Sign_Recorder.recorded_results))
             frame_counting += 1
             times = 0
+            print("frame pass~~~~", frame_counting)
         except:
-            print("frame error")
+            print("frame error", frame_counting)
             times += 1
 
-    if frame_counting > 20:
-        frame_counting = 0
-        sign_recorder.record()
-    if times > 10:
-        print("no hands -- stop detect")
-        Sign_Recorder.stop_input = True
-        detect_result()
-          
+        if frame_counting > 20:
+            frame_counting = 0
+            Sign_Recorder.record()
+            Sign_Recorder.recorded_results = []
+        # if times > 10:
+        #     print("no hands -- stop detect")
+        #     Sign_Recorder.stop_input = True
+        #     detect_result()
+    
+# def emo_gpt_result():
+#     global Sign_Recorder
+#     if len(Sign_Recorder.detect_signs_list) > 0:
+#         print("face frame", Sign_Recorder.face_frame)
+#         emo_text = detect_emotion(Sign_Recorder.face_frame)
+#         print(Sign_Recorder.detect_signs_list)
+#         if emo_text != "":
+#             Sign_Recorder.detect_signs_list.append(emo_text)
+#         # TODO: gpt
+#         global GPT_Result
+#         GPT_Result = GPTtranslate(Sign_Recorder.detect_signs_list, c.GPT_KEY)
+#         print("GPT_Result:", GPT_Result)
+#     else:
+#         print("no input")
+    
 def detect_result():
+    global Sign_Recorder
     result = ""
     if Sign_Recorder.stop_input:
         result = "@"
@@ -206,5 +225,5 @@ def detect_result():
 
     return result
     
-SLR_init()
-webcam_input()
+# SLR_init()
+# webcam_input()

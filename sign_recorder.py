@@ -27,7 +27,6 @@ class SignRecorder(object):
         
         self.stop_input = False
         
-        self.face_frame = ""
 
     def record(self):
         """
@@ -49,12 +48,16 @@ class SignRecorder(object):
         else:
             print("detect")
             self.compute_distances()
+            print("reference_signs", self.reference_signs)
             pred_sign = self._get_sign_predicted()
+            print("get_sign_predicted")
+            
             # self.check_sign_state()
             if self.detect_sign != "":
                 self.counting = 0
             # return pred_sign, self.is_recording
-                
+            print("dis:", np.sum(self.reference_signs["distance"].values))    
+            self.detect_signs_list = []
             # no result
             # if np.sum(self.reference_signs["distance"].values) == 0 or np.sum(self.reference_signs["distance"].values) > 10000:
             #     self.detect_no_hand()
@@ -71,18 +74,19 @@ class SignRecorder(object):
             _, left_hand, right_hand = extract_landmarks(results)
             left_hand_list.append(left_hand)
             right_hand_list.append(right_hand)
-
+        print("left_hand_list")
         # Create a SignModel object with the landmarks gathered during recording
         recorded_sign = SignModel(left_hand_list, right_hand_list)
-
+        print("recorded_sign")
         # Compute sign similarity with DTW (ascending order)
         self.reference_signs = dtw_distances(recorded_sign, self.reference_signs)
+        print("ref sign")
 
         # # Reset variables
-        # self.recorded_results = []
+        self.recorded_results = []
         # self.is_recording = False
 
-    def _get_sign_predicted(self, batch_size=12, threshold=0.7):
+    def _get_sign_predicted(self, batch_size=12, threshold=0.3):
         """
         Method that outputs the sign that appears the most in the list of closest
         reference signs, only if its proportion within the batch is greater than the threshold
@@ -106,14 +110,13 @@ class SignRecorder(object):
             self.detect_sign = ""
             # return self.check_sign_state()
             # self.check_sign_state()
-            if count / batch_size < 0.5:
+            if count / batch_size < 0.2:
                 self.detect_no_hand()
             return ""
         else:
             self.detect_sign = predicted_sign
             self.check_sign_state()
             print("predict:", predicted_sign)
-            self.face_frame = self.recorded_results[10]
             
         self.recorded_results = []
         return self.detect_sign
@@ -129,7 +132,7 @@ class SignRecorder(object):
     def detect_no_hand(self):
         self.counting += 1
         print("no!")
-        if self.counting > 3:
+        if self.counting > 20:
             print("STOP!")
             # self.is_recording = False
             self.stop_input = True
