@@ -150,12 +150,13 @@ def frame_input(frame):
             image_array = np.array(f, dtype=np.uint8)
             # print(image_array.shape)
             # frames_list.append(image_array)
-            try:
-                image, results = mediapipe_detection(image_array, holistic)
-                sign_detected, is_recording = Sign_Recorder.process_results(results)
-            except:
-                print(f"Error: mediapipe_detection #{i}")
-                break
+            # try:
+            image, results = mediapipe_detection(image_array, holistic)
+            Sign_Recorder.process_results(results)
+                # sign_detected, is_recording = Sign_Recorder.process_results(results)
+            # except:
+            #     print(f"Error: mediapipe_detection #{i}")
+            #     break
         # frame = cv2.imdecode(np.frombuffer(frame, np.uint8), cv2.IMREAD_COLOR)
         
         Sign_Recorder.record()

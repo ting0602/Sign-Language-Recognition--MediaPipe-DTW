@@ -51,9 +51,9 @@ while True:
         
         print(result)
         conn.send(result.encode('utf-8'))
-    elif msg == b"request_sign_mode":
-        # result = ?
-        conn.send(result.encode('utf-8'))
+    # elif msg == b"request_sign_mode":
+    #     # result = ?
+    #     conn.send(result.encode('utf-8'))
     # Send frame
     else: 
         try:

@@ -9,9 +9,12 @@ from utils.mediapipe_utils import mediapipe_detection
 def landmark_to_array(mp_landmark_list):
     """Return a np array of size (nb_keypoints x 3)"""
     keypoints = []
-    for landmark in mp_landmark_list.landmark:
-        keypoints.append([landmark.x, landmark.y, landmark.z])
-    return np.nan_to_num(keypoints)
+    try:
+        for landmark in mp_landmark_list.landmark:
+            keypoints.append([landmark.x, landmark.y, landmark.z])
+        return np.nan_to_num(keypoints)
+    except:
+        return None
 
 
 def extract_landmarks(results):
@@ -21,7 +24,10 @@ def extract_landmarks(results):
     :param results: mediapipe object that contains the 3D position of all keypoints
     :return: Two np arrays of size (1, 21 * 3) = (1, nb_keypoints * nb_coordinates) corresponding to both hands
     """
-    pose = landmark_to_array(results.pose_landmarks).reshape(99).tolist()
+    pose = landmark_to_array(results.pose_landmarks)
+    if pose is None:
+        return None, None, None
+    pose = pose.reshape(99).tolist()
 
     left_hand = np.zeros(63).tolist()
     if results.left_hand_landmarks:
