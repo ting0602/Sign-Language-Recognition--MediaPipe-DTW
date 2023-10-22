@@ -12,8 +12,7 @@ import config as c
 
 global Sign_Recorder
 global Command_Recorder
-global GPT_Result
-GPT_Result = ""
+global Emo_Frame
 request_ptr = 0
 
 def SLR_init():
@@ -83,42 +82,42 @@ def webcam_input():
             image, results = mediapipe_detection(frame, holistic)
 
             # Process results
-            sign_detected, is_recording = sign_recorder.process_results(results)
+            sign_update, is_recording = sign_recorder.process_results(results)
             
             # FIXME: input: gray
             # frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
             
             
             # Update the frame (draw landmarks & display result)
-            webcam_manager.update(frame, results, sign_detected, is_recording)
+            webcam_manager.update(frame, results, str(sign_update), is_recording)
             
             counting += 1
             if counting >= 20:
                 sign_recorder.record()
                 counting = 0
             pressedKey = cv2.waitKey(1) & 0xFF
-            if pressedKey == ord("r"):  # Record pressing r
-                # sign_recorder.record()
-                print("sign_detected", sign_detected)
-            elif pressedKey == ord("q"):  # Break pressing q
+            # if pressedKey == ord("r"):  # Record pressing r
+            #     # sign_recorder.record()
+            #     print("sign_detected", sign_detected)
+            if pressedKey == ord("q"):  # Break pressing q
                 break
             
         cap.release()
         cv2.destroyAllWindows()
         print("=== END ===")
-        if len(sign_recorder.detect_signs_list) > 0:
-            print("face frame", sign_recorder.face_frame.shape)
-            print("face frame", sign_recorder.face_frame)
-            emo_text = detect_emotion(sign_recorder.face_frame)
-            print(sign_recorder.detect_signs_list)
-            if emo_text != "":
-                sign_recorder.detect_signs_list.append(emo_text)
-            # TODO: gpt
-            global GPT_Result
-            GPT_Result = GPTtranslate(sign_recorder.detect_signs_list, c.GPT_KEY)
-            print("GPT_Result:", GPT_Result)
-        else:
-            print("no input")
+        # if len(sign_recorder.detect_signs_list) > 0:
+        #     print("face frame", sign_recorder.face_frame.shape)
+        #     print("face frame", sign_recorder.face_frame)
+        #     emo_text = detect_emotion(sign_recorder.face_frame)
+        #     print(sign_recorder.detect_signs_list)
+        #     if emo_text != "":
+        #         sign_recorder.detect_signs_list.append(emo_text)
+        #     # TODO: gpt
+        #     global GPT_Result
+        #     GPT_Result = GPTtranslate(sign_recorder.detect_signs_list, c.GPT_KEY)
+        #     print("GPT_Result:", GPT_Result)
+        # else:
+        #     print("no input")
         
     
 def frame_input(frame):
@@ -152,7 +151,11 @@ def frame_input(frame):
             # frames_list.append(image_array)
             try:
                 image, results = mediapipe_detection(image_array, holistic)
-                sign_detected, is_recording = Sign_Recorder.process_results(results)
+                sign_update, is_recording = Sign_Recorder.process_results(results)
+                # print("sign_update", sign_update)
+                # if sign_update:
+                #     global Emo_Frame
+                #     Emo_Frame = f
             except:
                 print(f"Error: mediapipe_detection #{i}")
                 break
@@ -163,25 +166,36 @@ def frame_input(frame):
 
     # return sign_recorder.stop_input    
     
-
-# def detect_result():
-#     if Sign_Recorder.is_stop:
-#         return GPT_Result
-    
-#     result = ""
-#     if len(Sign_Recorder.detect_signs_list) > 0:
-#         result = Sign_Recorder.detect_signs_list[-1]
-
-#     return result
-
+def emo_gpt_result(text_list):
+    global Sign_Recorder
+    # global Emo_Frame
+    # if len(Sign_Recorder.detect_signs_list) > 0:
+    if len(text_list) > 0:
+        # print("face frame", Sign_Recorder.face_frame)
+        # emo_text = detect_emotion(Emo_Frame)
+        emo_text = "?"
+        # print(Sign_Recorder.detect_signs_list)
+        if emo_text != "":
+            # Sign_Recorder.detect_signs_list.append(emo_text)
+            text_list.append(emo_text)
+        # TODO: gpt
+        # GPT_Result = GPTtranslate(Sign_Recorder.detect_signs_list, c.GPT_KEY)
+        # GPT_Result = GPTtranslate(text_list, c.GPT_KEY)
+        GPT_Result = "假GPT回覆"
+        print("GPT_Result:", GPT_Result)
+        return GPT_Result
+    else:
+        print("no input")
+        return "錯誤：請再次輸入"
     
 def detect_result(request_ptr):
     result = ""
     if Sign_Recorder.stop_input:
         request_ptr = 0
         result = "@"
-        for sl in Sign_Recorder.detect_signs_list:
-            result +=  sl
+        # for sl in Sign_Recorder.detect_signs_list:
+        #     result +=  sl
+        result += emo_gpt_result(["你", "兄弟", "聽人", "是", "?"])
         return result
     
     elif len(Sign_Recorder.detect_signs_list) > 0:
