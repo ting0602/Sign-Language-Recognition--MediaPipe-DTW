@@ -6,6 +6,8 @@ from utils.dtw import dtw_distances
 from models.sign_model import SignModel
 from utils.landmark_utils import extract_landmarks
 
+global No_hand
+
 # FIXME: seq_len
 class SignRecorder(object):
     def __init__(self, reference_signs: pd.DataFrame, seq_len=15):
@@ -31,12 +33,18 @@ class SignRecorder(object):
         
         self.face_frame = np.empty([1])
 
+        global No_hand
+        No_hand = False
+
     def record(self):
         """
         Initialize sign_distances & start recording
         """
-        self.reference_signs["distance"].values[:] = 0
-        self.is_recording = True
+        try:
+            self.reference_signs["distance"].values[:] = 0
+            self.is_recording = True
+        except:
+            pass
 
     def process_results(self, results) -> (str, bool):
         """
@@ -52,7 +60,8 @@ class SignRecorder(object):
         else:
             print("start detect")
             self.compute_distances()
-            self._get_sign_predicted()
+            if No_hand: self.detect_no_hand()
+            else: self._get_sign_predicted()
             self.recorded_results = []
             # pred_sign = self._get_sign_predicted()
             # self.check_sign_state()
@@ -82,9 +91,7 @@ class SignRecorder(object):
             left_hand_list.append(left_hand)
             right_hand_list.append(right_hand)
 
-        if No_hand:
-            self.reference_signs = []
-            return
+        if No_hand:  return
 
         # Create a SignModel object with the landmarks gathered during recording
         recorded_sign = SignModel(left_hand_list, right_hand_list)
@@ -108,7 +115,7 @@ class SignRecorder(object):
                         we output "Sign not found"
         :return: The name of the predicted sign
         """
-        if len(self.reference_signs) == 0:
+        if self.reference_signs is None:
             self.detect_sign = ""
             self.detect_no_hand()
             return
