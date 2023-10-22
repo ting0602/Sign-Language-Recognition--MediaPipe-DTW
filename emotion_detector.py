@@ -81,8 +81,6 @@ def detect_emotion(face_file, max_results=4, type=1):
         emotion_text = "~"
     if emotions[0]["surpriseLikelihood"] >= 3:
         emotion_text = "？"
-    else:
-        emotion_text = "。"
     # print(emotions, emo_result, emo_value)
     return emotion_text
     # return emotions, emo_result, emo_value

@@ -132,18 +132,9 @@ def frame_input(frame):
     with mediapipe.solutions.holistic.Holistic(
         min_detection_confidence=0.5, min_tracking_confidence=0.5
     ) as holistic:
-        # while not sign_recorder.stop_input:
-        
-        ###### Test detect_emotion(frame) #######
-        # emotions, emo_result, emo_value = detect_emotion(frame)
-        # print(emotions)
-        # print(emo_result, emo_value)
-        # exit(1)
-        ########################################
-
         # Make detections
-        # print("origin shape:", frame.shape)
-        # frames_list = []
+        global Emo_Frame
+        Emo_Frame = []
         for i, f in enumerate(frame):
             # frame_data_bytes = bytes(f)
             image_array = np.array(f, dtype=np.uint8)
@@ -152,6 +143,8 @@ def frame_input(frame):
             # try:
             image, results = mediapipe_detection(image_array, holistic)
             Sign_Recorder.process_results(results)
+            if i > 5  and i < 15 and Sign_Recorder.counting == 0:
+                Emo_Frame.append(f)
                 # sign_detected, is_recording = Sign_Recorder.process_results(results)
             # except:
             #     print(f"Error: mediapipe_detection #{i}")
@@ -163,18 +156,26 @@ def frame_input(frame):
 
     # return sign_recorder.stop_input    
     
-def emo_gpt_result(text_list):
+def emo_gpt_result():
     global Sign_Recorder
-    # global Emo_Frame
-    # if len(Sign_Recorder.detect_signs_list) > 0:
-    if len(text_list) > 0:
+    global Emo_Frame
+    if len(Sign_Recorder.detect_signs_list) > 0:
+    # if len(text_list) > 0:
         # print("face frame", Sign_Recorder.face_frame)
-        # emo_text = detect_emotion(Emo_Frame)
-        emo_text = "?"
+        emo_text = ""
+        try:
+            for emo in Emo_Frame:
+                emo_text = detect_emotion(emo)
+                if emo_text != "":
+                    break
+        except:
+            print("no emo frames")
+                    
+        # emo_text = "?"
         # print(Sign_Recorder.detect_signs_list)
         if emo_text != "":
-            # Sign_Recorder.detect_signs_list.append(emo_text)
-            text_list.append(emo_text)
+            Sign_Recorder.detect_signs_list.append(emo_text)
+            # text_list.append(emo_text)
         # TODO: gpt
         # GPT_Result = GPTtranslate(Sign_Recorder.detect_signs_list, c.GPT_KEY)
         # GPT_Result = GPTtranslate(text_list, c.GPT_KEY)
@@ -192,7 +193,8 @@ def detect_result(request_ptr):
         result = "@"
         # for sl in Sign_Recorder.detect_signs_list:
         #     result +=  sl
-        result += emo_gpt_result(["你", "兄弟", "聽人", "是", "?"])
+        result += emo_gpt_result()
+        # result += emo_gpt_result(["你", "兄弟", "聽人", "是", "?"])
         return result
     
     elif len(Sign_Recorder.detect_signs_list) > 0:
