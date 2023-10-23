@@ -103,7 +103,7 @@ class SignRecorder(object):
         # self.recorded_results = []
         # self.is_recording = False
 
-    def _get_sign_predicted(self, batch_size=12, threshold=0.4):
+    def _get_sign_predicted(self, batch_size=5, threshold=0.5):
         """
         Method that outputs the sign that appears the most in the list of closest
         reference signs, only if its proportion within the batch is greater than the threshold
@@ -132,7 +132,7 @@ class SignRecorder(object):
             self.detect_sign = ""
             # return self.check_sign_state()
             # self.check_sign_state()
-            if (count / batch_size) < 0.3:
+            if (count / batch_size) < 0.5:
                 self.detect_no_hand()
             # return ""
         else:
@@ -146,12 +146,17 @@ class SignRecorder(object):
         # return self.check_sign_state()
 
     def check_sign_state(self):
-        if self.detect_sign != self.last_sign and self.detect_sign != "":
+        if len(self.detect_signs_list) == 0:
+            self.detect_signs_list = [self.detect_sign]
+            self.last_sign = self.detect_sign
+            return True
+        if self.detect_sign != self.detect_signs_list[-1] and self.detect_sign != "":
             self.detect_signs_list.append(self.detect_sign)
             self.last_sign = self.detect_sign
-            # return False
-        else: self.is_recording = True
-        # return True
+            return False
+        else: 
+            self.is_recording = True
+            return True
     
     def detect_no_hand(self):
         self.counting += 1

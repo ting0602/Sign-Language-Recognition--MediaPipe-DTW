@@ -169,7 +169,8 @@ def emo_gpt_result():
                 if emo_text != "":
                     break
         except:
-            print("no emo frames")
+            pass
+            # print("no emo frames")
                     
         # emo_text = "?"
         # print(Sign_Recorder.detect_signs_list)
@@ -177,18 +178,18 @@ def emo_gpt_result():
             Sign_Recorder.detect_signs_list.append(emo_text)
             # text_list.append(emo_text)
         # TODO: gpt
-        # GPT_Result = GPTtranslate(Sign_Recorder.detect_signs_list, c.GPT_KEY)
+        GPT_Result = GPTtranslate(Sign_Recorder.detect_signs_list, c.GPT_KEY)
         # GPT_Result = GPTtranslate(text_list, c.GPT_KEY)
-        GPT_Result = "假GPT回覆"
+        # GPT_Result = "假GPT回覆"
         print("GPT_Result:", GPT_Result)
         return GPT_Result
     else:
         print("no input")
         return "錯誤：請再次輸入"
     
-def detect_result(request_ptr):
+def detect_result(request_ptr, gpt=False):
     result = ""
-    if Sign_Recorder.stop_input:
+    if gpt:
         request_ptr = 0
         result = "@"
         # for sl in Sign_Recorder.detect_signs_list:

@@ -51,9 +51,14 @@ while True:
         
         print(result)
         conn.send(result.encode('utf-8'))
-    # elif msg == b"request_sign_mode":
-    #     # result = ?
-    #     conn.send(result.encode('utf-8'))
+    elif msg == b"stop":
+        print("stop")
+        result = detect_result(request_ptr, gpt=True)
+        if result == "": pass
+        elif result[0] == "@":
+            request_ptr = 0
+        else: request_ptr = request_ptr+1 
+        conn.send(result.encode('utf-8'))
     # Send frame
     else: 
         try:
