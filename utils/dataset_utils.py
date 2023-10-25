@@ -7,12 +7,10 @@ import pickle
 
 def load_dataset():
     videos = [
-        # file_name.replace(".mkv", "")
         file_name.replace(".mp4", "")
         for root, dirs, files in os.walk(os.path.join("data", "videos"))
         for file_name in files
         if file_name.endswith(".mp4")
-        # if file_name.endswith(".mkv")
     ]
     dataset = [
         file_name.replace(".pickle", "").replace("pose_", "")
