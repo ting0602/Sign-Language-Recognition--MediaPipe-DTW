@@ -1,22 +1,30 @@
 # Sign Language Recognition - using MediaPipe and DTW
 
-![License: MIT](https://img.shields.io/badge/license-MIT-green)
+## Resource
 
 This repository proposes an implementation of a Sign Recognition Model using the **MediaPipe** library 
 for landmark extraction and **Dynamic Time Warping** (DTW) as a similarity metric between signs.
 
-![](example.gif)
-
 #### Source : https://www.sicara.ai/blog/sign-language-recognition-using-mediapipe
 ___
+## Introduction - Sign Input
+### 2023 Meichu Hackathon
 
+**Company:** Google
+
+**Ranking:** Second place
+
+**Topic:** [Suppor&ve Phone for All People](https://2023.meichuhackathon.org/assets/pdfs/Google_2023.pdf)
+
+**Report**: [Sign Input]()
+___
 ## Set up
 
 ### 1. Open terminal and go to the Project directory
 
 ### 2. Install the necessary libraries
 
-- ` pip install -r requirements.txt `
+` pip install -r requirements.txt `
 
 ### 3. Import Videos of signs which will be considered as reference
 The architecture of the `videos/` folder must be:
@@ -84,14 +92,9 @@ all the reference signs present in the dataset.
 
 ___
 
-## References
+## Other Tool
 
- - [Pham Chinh Huu, Le Quoc Khanh, Le Thanh Ha : Human Action Recognition Using Dynamic Time Warping and Voting Algorithm](https://www.researchgate.net/publication/290440452)
- - [Mediapipe : Pose classification](https://google.github.io/mediapipe/solutions/pose_classification.html)
-
-___
-
-### ChangeSpeed.py  usage
+### ChangeSpeed and RotateVideo Usage
 ChangeSpeed.py recursively modify the video speed (can be modified in .py) and save as a new video named as {original_name-speedi}.
 RotateVideo.py do the rotation of the mp4 file (the angle can be modified in .py). The output is named as {original_name-rotatei}.
 default speed: 0.7, 1.5 
@@ -101,4 +104,11 @@ pip install moviepy
 python ChangeSpeed.py <dir_name>
 python RotateVideo.py <dir_name>
 ```
+___
+
+## References
+
+ - [Pham Chinh Huu, Le Quoc Khanh, Le Thanh Ha : Human Action Recognition Using Dynamic Time Warping and Voting Algorithm](https://www.researchgate.net/publication/290440452)
+ - [Mediapipe : Pose classification](https://google.github.io/mediapipe/solutions/pose_classification.html)
+ - [Reference Github](https://github.com/gabguerin/Sign-Language-Recognition--MediaPipe-DTW)
 
