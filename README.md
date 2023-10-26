@@ -8,15 +8,36 @@ for landmark extraction and **Dynamic Time Warping** (DTW) as a similarity metri
 #### Source : https://www.sicara.ai/blog/sign-language-recognition-using-mediapipe
 ___
 ## Introduction - Sign Input
-### 2023 Meichu Hackathon
+### [2023 Meichu Hackathon](https://2023.meichuhackathon.org/)
 
 **Company:** Google
 
 **Ranking:** Second place
 
-**Topic:** [Suppor&ve Phone for All People](https://2023.meichuhackathon.org/assets/pdfs/Google_2023.pdf)
+**Theme:** [Suppor&ve Phone for All People](https://2023.meichuhackathon.org/assets/pdfs/Google_2023.pdf)
 
-**Report**: [Sign Input]()
+**Introduction:**
+
+We have developed an Android app called "Sign Input" (Sign Language Input Method) tailored for the deaf community in Taiwan, catering to their unique communication needs. 
+
+This app incorporates three essential features:
+
+**1. Word Recognition:** We employ the Mediapipe framework in conjunction with the DTW (Dynamic Time Warping) algorithm to quickly recognize individual sign language words, even with limited data.
+
+**2. Emotion and Expression Analysis:** Leveraging the Google Cloud Vision API, we have gathered a substantial dataset of images for emotion recognition. This allows us to discern whether a sentence is a question or a statement based on the facial expressions in the communication.
+
+**3. Grammar Enhancement:** To ensure that the sentences are in a format that is easily comprehensible to the general public, we have integrated OpenAI's GPT-3.5 model. By providing GPT with sets of example sentence structures, it rephrases and organizes the sentences into more commonly used grammatical forms.
+
+We envision that the Sign Input app is just the beginning of our journey. We hope to expand this technology for various applications, including phone communication and real-time Google Meet subtitle translation. 
+
+Our ultimate goal is to eliminate the barriers that deaf individuals face in their work and daily lives, allowing them to overcome their hearing impairment. Our aspiration is to bridge the communication divide, fostering a more inclusive society where everyone can connect without hindrance.
+
+*Note: You will need the [Android-side code](https://github.com/luckyjp6/Sign-Language-Recognition) to run this application.*
+
+**Report:** [Sign Input](https://github.com/ting0602/Sign-Language-Recognition--MediaPipe-DTW/blob/main/SignInput.pdf)
+
+**Demo:**
+![image](https://github.com/ting0602/Sign-Language-Recognition--MediaPipe-DTW/blob/main/2023mc_hackathon_demo.gif)
 ___
 ## Set up
 
@@ -48,12 +69,13 @@ To automatically create a small dataset of French signs:
 - Add more YouTube links in ``yt_links.csv`` if needed
 > N.B. The current dataset is insufficient to obtain good results. Feel free to add more links or import your own videos 
 
-### 4. Load the dataset and turn on the Webcam
+### 4. Load the dataset
 
-- ` python main.py `
+- ` python init_video.py `
 
-### 5. Press the "r" key to record the sign. 
+### 5. Run server to record the sign
 
+- ` python server_socket.py `
 ___
 ## Code Description
 
