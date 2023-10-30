@@ -14,7 +14,7 @@ ___
 
 **Ranking:** Second place
 
-**Theme:** [Suppor&ve Phone for All People](https://2023.meichuhackathon.org/assets/pdfs/Google_2023.pdf)
+**Theme:** [Supportive Phone for All People](https://2023.meichuhackathon.org/assets/pdfs/Google_2023.pdf)
 
 **Introduction:**
 
